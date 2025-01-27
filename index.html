@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take Quiz - QuizMe</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <style>
+        * {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #333;
+        }
+
+        body {
+            padding-top: 70px;
+        }
+
+        .card {
+            margin: 15px 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <a class="navbar-brand" href="#">QuizMe</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="index.html" id="homeLink">Home<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="about.html">About</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
+                        aria-expanded="false">
+                        Categories
+                    </a>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">Computer Science</a>
+                        <a class="dropdown-item" href="#">Mathematics</a>
+                        <a class="dropdown-item" href="#">Science & Nature</a>
+                        <a class="dropdown-item" href="#">History</a>
+                        <a class="dropdown-item" href="#">General Knowledge</a>
+                        <a class="dropdown-item" href="#">Vehicles</a>
+                    </div>
+                </li>
+            </ul>
+
+            <form class="form-inline my-2 my-lg-0 mr-3 ml-auto" style="width: auto;">
+                <input class="form-control mr-sm-2" type="search" id="searchInput" style="width: 300px;"
+                    placeholder="Search for quizzes by course" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+
+            <!-- Login/Signup Button (aligned to the right) -->
+            <a href="login.html" id="loginBtn" class="btn btn-primary my-2 my-sm-0">Login/Signup</a>
+        </div>
+    </nav>
+
+    <!-- Search Bar -->
+    <div class="container">
+
+        <!-- Course Categories (Grid Layout) -->
+        <div class="row" id="courseContainer">
+
+        </div>
+    </div>
+
+    <!-- Bootstrap & jQuery JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Array of courses (you can extend this with more categories)
+        let isLoggedIn = false;
+        const courses = [
+            { name: 'Computer Science', description: 'Computer Science Quiz', category: 18 },
+            { name: 'Mathematics', description: 'Mathematics Quiz', category: 19 },
+            { name: 'Science & Nature', description: 'Science & Nature Quiz', category: 17 },
+            { name: 'History', description: 'History Quiz', category: 23 },
+            { name: 'General Knowledge', description: 'General Knowledge Quiz', category: 9 },
+            { name: 'Vehicles', description: 'Vehicles Quiz', category: 28 }
+        ];
+
+        // Function to dynamically generate Bootstrap cards
+        function loadCourses() {
+            const courseContainer = document.getElementById('courseContainer');
+            courseContainer.innerHTML = ''; // Clear existing content
+
+            courses.forEach(course => {
+                const card = `
+                <div class="col-md-6">
+                    <div class="card">
+                          <h5 class="card-header">
+                                ${course.name}
+                            </h5>
+                        <div class="card-body">
+                            <p class="card-text">${course.description}</p>
+                            <a href="quiz.html?category=${course.category}" class="btn btn-primary">Start Quiz</a>
+                        </div>
+                    </div>
+                </div> `;
+                courseContainer.innerHTML += card;
+            });
+        }
+
+        // Search Functionality
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const searchQuery = this.value.toLowerCase();
+            const filteredCourses = courses.filter(course =>
+                course.name.toLowerCase().includes(searchQuery) ||
+                course.description.toLowerCase().includes(searchQuery)
+            );
+
+            // Update the course list based on the search
+            document.getElementById('courseContainer').innerHTML = '';
+            filteredCourses.forEach(course => {
+                const card = `
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">${course.name}</h5>
+                            <p class="card-text">${course.description}</p>
+                            <a href="#" class="btn btn-primary">Start Quiz</a>
+                        </div>
+                    </div>
+                </div>`;
+                document.getElementById('courseContainer').innerHTML += card;
+            });
+        });
+
+        // Category Filter Functionality
+        document.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', function () {
+                const category = this.textContent;
+                const filteredCourses = courses.filter(course =>
+                    course.name.toLowerCase().includes(category.toLowerCase())
+                );
+
+                // Update the course list based on the category
+                document.getElementById('courseContainer').innerHTML = '';
+                filteredCourses.forEach(course => {
+                    const card = `
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">${course.name}</h5>
+                                <p class="card-text">${course.description}</p>
+                                <a href="#" class="btn btn-primary">Start Quiz</a>
+                            </div>
+                        </div>
+                    </div>`;
+                    document.getElementById('courseContainer').innerHTML += card;
+                });
+            });
+        });
+
+        // Load courses when home link is clicked
+        document.getElementById('homeLink').addEventListener('click', function () {
+            loadCourses();
+        });
+
+        // Check login status when the DOM is ready
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const loginStatus = urlParams.get('login');
+            const email = urlParams.get('email');
+
+            if (loginStatus === '1') {
+                isLoggedIn = true;
+            }
+
+            // Update login button based on login status
+            const loginBtn = document.getElementById('loginBtn');
+            if (isLoggedIn) {
+                
+                loginBtn.textContent = 'Progress';
+        loginBtn.href = `progress.html?email=${email}`;
+        loginBtn.classList.remove('btn-primary');
+        loginBtn.classList.add('btn-success');
+        console.log('logged in.');
+        if (email) {
+            document.body.insertAdjacentHTML('afterbegin', `<h3>Welcome, ${email}!</h3>`);
+        }
+    } else {
+        loginBtn.textContent = 'Login/Signup';
+        loginBtn.href = 'login.html';
+    }
+            loadCourses(); // Load courses after checking login status
+        });
+    </script>
+</body>
+
+</html>
